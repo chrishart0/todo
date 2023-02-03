@@ -10,21 +10,19 @@ import {
   View,
   withAuthenticator,
 } from "@aws-amplify/ui-react";
-import { listNotes, getUser } from "../graphql/queries";
+import { getUser } from "../graphql/queries";
 import {
   createUser as createUserMutation,
-  createNote as createNoteMutation,
   createToDoItem as createToDoItemMutation,
-  deleteNote as deleteNoteMutation,
+  deleteToDoItem as deleteToDoItemMutation
 } from "../graphql/mutations";
 
 const App = ({ signOut, user }) => {
   const [userModel, setUserModel] = useState([]);
-  const [notes, setNotes] = useState([]);
+  const [toDoItems, setToDoItems] = useState([]);
 
   useEffect(() => {
     fetchUser();
-    fetchNotes();
   }, []);
 
   // Fetch the user, if there is no user for signed in user then create a new one
@@ -35,6 +33,8 @@ const App = ({ signOut, user }) => {
       const userFromAPI = apiData.data.getUser;
       console.log("Found user: ", userFromAPI)
       setUserModel(userFromAPI);
+      // Pull ToDo items from user
+      setToDoItems(userFromAPI.ToDoItems.items)
     } else {
       console.log("Creating user")
       createUser();
@@ -55,13 +55,7 @@ const App = ({ signOut, user }) => {
     fetchUser(); //ToDo: Move to then
   }
 
-  async function fetchNotes() {
-    const apiData = await API.graphql({ query: listNotes });
-    const notesFromAPI = apiData.data.listNotes.items;
-    setNotes(notesFromAPI);
-  }
-
-  async function createNote(event) {
+  async function createToDoItem(event) {
     event.preventDefault();
     const form = new FormData(event.target);
     const data = {
@@ -73,69 +67,64 @@ const App = ({ signOut, user }) => {
       description: form.get("description"),
       userToDoItemsOwner: user.username
     };
-    // await API.graphql({
-    //   query: createNoteMutation,
-    //   variables: { input: data },
-    // });
-    await API.graphql(graphqlOperation(createNoteMutation, { input: data }))
+    
     await API.graphql(graphqlOperation(createToDoItemMutation, { input: dataToDo }))
 
-
-    fetchNotes();
+    fetchUser();
     event.target.reset();
   }
 
-  async function deleteNote({ id }) {
-    const newNotes = notes.filter((note) => note.id !== id);
-    setNotes(newNotes);
+  async function deleteToDo({ id }) {
+    const newToDoItems = toDoItems.filter((toDoItem) => toDoItem.id !== id);
+    setToDoItems(newToDoItems);
     await API.graphql({
-      query: deleteNoteMutation,
+      query: deleteToDoItemMutation,
       variables: { input: { id } },
     });
-    fetchNotes();
+    fetchUser();
   }
 
   return (
     <View className="App">
       <Heading level={1}>{user.username}&apos;s ToDo list</Heading>
-      <View as="form" margin="3rem 0" onSubmit={createNote}>
+      <View as="form" margin="3rem 0" onSubmit={createToDoItem}>
         <Flex direction="row" justifyContent="center">
           <TextField
             name="name"
-            placeholder="Note Name"
-            label="Note Name"
+            placeholder="To Do Item Name"
+            label="To Do Item Name"
             labelHidden
             variation="quiet"
             required
           />
           <TextField
             name="description"
-            placeholder="Note Description"
-            label="Note Description"
+            placeholder="To Do Item Description"
+            label="To Do Item Description"
             labelHidden
             variation="quiet"
             required
           />
           <Button type="submit" variation="primary">
-            Create Note
+            Create ToDo
           </Button>
         </Flex>
       </View>
       <Heading level={2}>My ToDo Items</Heading>
       <View margin="3rem 0">
-        {notes.map((note) => (
+        {toDoItems.map((toDoItem) => (
           <Flex
-            key={note.id || note.name}
+            key={toDoItem.id || toDoItem.name}
             direction="row"
             justifyContent="center"
             alignItems="center"
           >
             <Text as="strong" fontWeight={700}>
-              {note.name}
+              {toDoItem.name}
             </Text>
-            <Text as="span">{note.description}</Text>
-            <Button variation="link" onClick={() => deleteNote(note)}>
-              Delete note
+            <Text as="span">{toDoItem.description}</Text>
+            <Button variation="link" onClick={() => deleteToDo(toDoItem)}>
+              Delete ToDo
             </Button>
           </Flex>
         ))}
