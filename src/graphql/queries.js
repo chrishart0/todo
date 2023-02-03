@@ -6,6 +6,18 @@ export const getUser = /* GraphQL */ `
     getUser(owner: $owner) {
       owner
       friends
+      ToDoItems {
+        items {
+          id
+          title
+          description
+          createdAt
+          updatedAt
+          userToDoItemsOwner
+          owner
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -29,8 +41,44 @@ export const listUsers = /* GraphQL */ `
       items {
         owner
         friends
+        ToDoItems {
+          nextToken
+        }
         createdAt
         updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getToDoItem = /* GraphQL */ `
+  query GetToDoItem($id: ID!) {
+    getToDoItem(id: $id) {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      userToDoItemsOwner
+      owner
+    }
+  }
+`;
+export const listToDoItems = /* GraphQL */ `
+  query ListToDoItems(
+    $filter: ModelToDoItemFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listToDoItems(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        title
+        description
+        createdAt
+        updatedAt
+        userToDoItemsOwner
+        owner
       }
       nextToken
     }

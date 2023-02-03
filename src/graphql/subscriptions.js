@@ -9,6 +9,18 @@ export const onCreateUser = /* GraphQL */ `
     onCreateUser(filter: $filter, owner: $owner) {
       owner
       friends
+      ToDoItems {
+        items {
+          id
+          title
+          description
+          createdAt
+          updatedAt
+          userToDoItemsOwner
+          owner
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -22,6 +34,18 @@ export const onUpdateUser = /* GraphQL */ `
     onUpdateUser(filter: $filter, owner: $owner) {
       owner
       friends
+      ToDoItems {
+        items {
+          id
+          title
+          description
+          createdAt
+          updatedAt
+          userToDoItemsOwner
+          owner
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -35,8 +59,68 @@ export const onDeleteUser = /* GraphQL */ `
     onDeleteUser(filter: $filter, owner: $owner) {
       owner
       friends
+      ToDoItems {
+        items {
+          id
+          title
+          description
+          createdAt
+          updatedAt
+          userToDoItemsOwner
+          owner
+        }
+        nextToken
+      }
       createdAt
       updatedAt
+    }
+  }
+`;
+export const onCreateToDoItem = /* GraphQL */ `
+  subscription OnCreateToDoItem(
+    $filter: ModelSubscriptionToDoItemFilterInput
+    $owner: String
+  ) {
+    onCreateToDoItem(filter: $filter, owner: $owner) {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      userToDoItemsOwner
+      owner
+    }
+  }
+`;
+export const onUpdateToDoItem = /* GraphQL */ `
+  subscription OnUpdateToDoItem(
+    $filter: ModelSubscriptionToDoItemFilterInput
+    $owner: String
+  ) {
+    onUpdateToDoItem(filter: $filter, owner: $owner) {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      userToDoItemsOwner
+      owner
+    }
+  }
+`;
+export const onDeleteToDoItem = /* GraphQL */ `
+  subscription OnDeleteToDoItem(
+    $filter: ModelSubscriptionToDoItemFilterInput
+    $owner: String
+  ) {
+    onDeleteToDoItem(filter: $filter, owner: $owner) {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      userToDoItemsOwner
+      owner
     }
   }
 `;

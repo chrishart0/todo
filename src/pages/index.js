@@ -10,7 +10,7 @@ import {
   View,
   withAuthenticator,
 } from "@aws-amplify/ui-react";
-import { listNotes, listUsers } from "../graphql/queries";
+import { listNotes, listUsers, getUser } from "../graphql/queries";
 import {
   createUser as createUserMutation,
   createNote as createNoteMutation,
@@ -23,16 +23,15 @@ const App = ({ signOut, user }) => {
 
   useEffect(() => {
     fetchUser();
-    console.log("userModel")
-    console.log(userModel)
     fetchNotes();
   }, []);
 
   async function fetchUser() {
-    const apiData = await API.graphql({ query: listUsers });
-    console.log("apiData: ", apiData)
-    if (apiData.data.listUsers.items !== undefined) {
-      const userFromAPI = apiData.data.listUsers.items;
+    console.log("Fetching user")
+    const apiData = await API.graphql({ query: getUser, variables: { owner: user.username } });
+    if (apiData.data.getUser !== undefined ) {
+      const userFromAPI = apiData.data.getUser;
+      console.log("Found user: ", userFromAPI)
       setUserModel(userFromAPI);
     } else {
       console.log("Creating user")
@@ -42,7 +41,7 @@ const App = ({ signOut, user }) => {
 
   async function createUser() {
     const data = {
-      owner: "test",
+      owner: user.username,
       friends: ['test2'],
       // notes: 
       //   {name: "test",
@@ -53,7 +52,7 @@ const App = ({ signOut, user }) => {
       query: createUserMutation,
       variables: { input: data },
     });
-    fetchUser();
+    fetchUser(); //ToDo: Move to then
   }
 
   async function fetchNotes() {

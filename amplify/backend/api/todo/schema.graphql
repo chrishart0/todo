@@ -7,8 +7,18 @@ type User @model
   ]) {
     owner: String! @primaryKey
     friends: [String]
-    # notes: [Note]! @hasMany
+    ToDoItems: [ToDoItem] @hasMany
   }
+
+# https://docs.amplify.aws/cli/graphql/data-modeling/#configure-a-secondary-index
+type ToDoItem @model 
+@auth(rules: [
+    { allow: owner },
+  ]) {
+  id: ID!
+  title: String!
+  description: String!
+}
 
 type Note @model @auth(
   rules: [ 

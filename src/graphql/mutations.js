@@ -9,6 +9,18 @@ export const createUser = /* GraphQL */ `
     createUser(input: $input, condition: $condition) {
       owner
       friends
+      ToDoItems {
+        items {
+          id
+          title
+          description
+          createdAt
+          updatedAt
+          userToDoItemsOwner
+          owner
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -22,6 +34,18 @@ export const updateUser = /* GraphQL */ `
     updateUser(input: $input, condition: $condition) {
       owner
       friends
+      ToDoItems {
+        items {
+          id
+          title
+          description
+          createdAt
+          updatedAt
+          userToDoItemsOwner
+          owner
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -35,8 +59,68 @@ export const deleteUser = /* GraphQL */ `
     deleteUser(input: $input, condition: $condition) {
       owner
       friends
+      ToDoItems {
+        items {
+          id
+          title
+          description
+          createdAt
+          updatedAt
+          userToDoItemsOwner
+          owner
+        }
+        nextToken
+      }
       createdAt
       updatedAt
+    }
+  }
+`;
+export const createToDoItem = /* GraphQL */ `
+  mutation CreateToDoItem(
+    $input: CreateToDoItemInput!
+    $condition: ModelToDoItemConditionInput
+  ) {
+    createToDoItem(input: $input, condition: $condition) {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      userToDoItemsOwner
+      owner
+    }
+  }
+`;
+export const updateToDoItem = /* GraphQL */ `
+  mutation UpdateToDoItem(
+    $input: UpdateToDoItemInput!
+    $condition: ModelToDoItemConditionInput
+  ) {
+    updateToDoItem(input: $input, condition: $condition) {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      userToDoItemsOwner
+      owner
+    }
+  }
+`;
+export const deleteToDoItem = /* GraphQL */ `
+  mutation DeleteToDoItem(
+    $input: DeleteToDoItemInput!
+    $condition: ModelToDoItemConditionInput
+  ) {
+    deleteToDoItem(input: $input, condition: $condition) {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      userToDoItemsOwner
+      owner
     }
   }
 `;
