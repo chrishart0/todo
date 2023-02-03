@@ -1,0 +1,25 @@
+# https://docs.amplify.aws/cli-legacy/graphql-transformer/auth/#multiple-authorization-rules
+
+type User @model
+  @auth(rules: [
+    { allow: owner },
+    { allow: owner, ownerField: "friends", operations: [read] }
+  ]) {
+    owner: String! @primaryKey
+    friends: [String]
+    # notes: [Note]! @hasMany
+  }
+
+type Note @model @auth(
+  rules: [ 
+    # Defaults to use the "owner" field.
+    { allow: owner},
+
+    # allow all authenticated users to read posts
+    { allow: private, operations: [read] },
+  ] 
+){
+  id: ID!
+  name: String!
+  description: String
+}
