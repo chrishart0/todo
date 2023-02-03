@@ -10,10 +10,11 @@ import {
   View,
   withAuthenticator,
 } from "@aws-amplify/ui-react";
-import { listNotes, listUsers, getUser } from "../graphql/queries";
+import { listNotes, getUser } from "../graphql/queries";
 import {
   createUser as createUserMutation,
   createNote as createNoteMutation,
+  createToDoItem as createToDoItemMutation,
   deleteNote as deleteNoteMutation,
 } from "../graphql/mutations";
 
@@ -26,10 +27,11 @@ const App = ({ signOut, user }) => {
     fetchNotes();
   }, []);
 
+  // Fetch the user, if there is no user for signed in user then create a new one
   async function fetchUser() {
     console.log("Fetching user")
     const apiData = await API.graphql({ query: getUser, variables: { owner: user.username } });
-    if (apiData.data.getUser !== undefined ) {
+    if (apiData.data.getUser !== undefined && apiData.data.getUser !== null ) {
       const userFromAPI = apiData.data.getUser;
       console.log("Found user: ", userFromAPI)
       setUserModel(userFromAPI);
@@ -39,13 +41,11 @@ const App = ({ signOut, user }) => {
     }
   }
 
+  // Create new user with hardcoded friend for testing purposes
   async function createUser() {
     const data = {
       owner: user.username,
       friends: ['test2'],
-      // notes: 
-      //   {name: "test",
-      //   description: "test"}
 
     };
     await API.graphql({
@@ -68,11 +68,18 @@ const App = ({ signOut, user }) => {
       name: form.get("name"),
       description: form.get("description"),
     };
+    const dataToDo = {
+      title: form.get("name"),
+      description: form.get("description"),
+      userToDoItemsOwner: user.username
+    };
     // await API.graphql({
     //   query: createNoteMutation,
     //   variables: { input: data },
     // });
     await API.graphql(graphqlOperation(createNoteMutation, { input: data }))
+    await API.graphql(graphqlOperation(createToDoItemMutation, { input: dataToDo }))
+
 
     fetchNotes();
     event.target.reset();
