@@ -18,19 +18,5 @@ type ToDoItem @model
   id: ID!
   title: String!
   description: String!
-  user: User @belongsTo
-}
-
-type Note @model @auth(
-  rules: [ 
-    # Defaults to use the "owner" field.
-    { allow: owner},
-
-    # allow all authenticated users to read posts
-    { allow: private, operations: [read] },
-  ] 
-){
-  id: ID!
-  name: String!
-  description: String
+  # user: User @belongsTo
 }

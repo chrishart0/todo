@@ -58,14 +58,11 @@ const App = ({ signOut, user }) => {
   async function createToDoItem(event) {
     event.preventDefault();
     const form = new FormData(event.target);
-    const data = {
-      name: form.get("name"),
-      description: form.get("description"),
-    };
+
     const dataToDo = {
       title: form.get("name"),
       description: form.get("description"),
-      userToDoItemsOwner: user.username
+      userToDoItemsOwner: user.username,
     };
     
     await API.graphql(graphqlOperation(createToDoItemMutation, { input: dataToDo }))
@@ -120,7 +117,7 @@ const App = ({ signOut, user }) => {
             alignItems="center"
           >
             <Text as="strong" fontWeight={700}>
-              {toDoItem.name}
+              {toDoItem.title}
             </Text>
             <Text as="span">{toDoItem.description}</Text>
             <Button variation="link" onClick={() => deleteToDo(toDoItem)}>
